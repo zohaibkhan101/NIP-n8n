@@ -1,0 +1,1184 @@
+{
+  "name": "14/01/2026",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        112
+      ],
+      "id": "39d49de2-6d9e-4676-9ab1-ae98d8ce7d12",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc47f40e-0850-4762-9efb-999608a2c096",
+              "name": "counter",
+              "value": "={{ $json.count }}",
+              "type": "number"
+            },
+            {
+              "id": "92034c06-3976-4099-a7a5-28a252204472",
+              "name": "cursor",
+              "value": "={{ $json.cursor }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        112
+      ],
+      "id": "95b8abb9-3f1f-4674-9547-6d0545b23077",
+      "name": "Counter"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b2f9c3c3-32f4-48b4-b72f-76f03c35b750",
+              "name": "count",
+              "value": 1,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        112
+      ],
+      "id": "180e5f73-9986-4328-b140-deada42510f7",
+      "name": "Set Count"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "928894d0-2876-4996-9b1e-3d365b903771",
+              "leftValue": "={{ $('Counter').item.json.counter }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1216,
+        112
+      ],
+      "id": "a4844224-cea9-4590-95ac-8e7c4fefbb01",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a252eb06-03cd-4e3f-84b0-2a46082606ca",
+              "name": "counter",
+              "value": "={{ $('Counter').item.json.counter }}",
+              "type": "number"
+            },
+            {
+              "id": "43222ff8-c354-4afa-b050-7d55fe30c865",
+              "name": "cursor",
+              "value": "={{ $('Get Tweets').item.json.next_cursor }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        544,
+        432
+      ],
+      "id": "125e0902-c05c-455a-8f94-71c2076b8db3",
+      "name": "Set Increase"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This code should be placed in an n8n Function node\n\n// Get the input items\nconst items = $input.all();\n\n// Process each item in the array\nreturn items.map(item => {\n  // Create a new value for the count field\n  let newCount = 1;\n  \n  // If there's an existing counter value, use it as a base\n  if (item.json && item.json.counter !== undefined) {\n    newCount = item.json.counter + 1;\n  }\n  \n  // Ensure json property exists\n  if (!item.json) {\n    item.json = {};\n  }\n  \n  // Set the value to the new field name \"count\"\n  item.json.count = newCount;\n  \n  // Return the modified item\n  return item;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        432
+      ],
+      "id": "4ec33087-a164-40ab-975f-4cc124a67245",
+      "name": "Increase Count"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5be1f203-28ea-4635-b42d-01f2a5bb367f",
+              "name": "count",
+              "value": "={{ $json.count }}",
+              "type": "string"
+            },
+            {
+              "id": "b68f8c17-c045-4b5b-8f8b-367ec72b72a3",
+              "name": "cursor",
+              "value": "={{ $('Set Increase').item.json.cursor }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        432
+      ],
+      "id": "68854f70-227f-4da5-8c5f-cf8bfa11bc3f",
+      "name": "Set Count and Cursor"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1mQ3FTZY7IBI-Z7MYCAeIaLQcP8uxRSvRwXhIgLsVwxw",
+          "mode": "list",
+          "cachedResultName": "IGNP",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mQ3FTZY7IBI-Z7MYCAeIaLQcP8uxRSvRwXhIgLsVwxw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "tweetId",
+              "displayName": "tweetId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "likeCount",
+              "displayName": "likeCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "retweetCount",
+              "displayName": "retweetCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "replyCount",
+              "displayName": "replyCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "quoteCount",
+              "displayName": "quoteCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "viewCount",
+              "displayName": "viewCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "createdAt",
+              "displayName": "createdAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        864,
+        112
+      ],
+      "id": "125976e1-b33d-4a1e-9672-b990f4843f5e",
+      "name": "Add to Sheet"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This approach handles both single tweets and collections\n// It focuses on properly formatting the output for n8n\n// First, let's log what we're working with for debugging\nconsole.log(\"Input item structure:\", JSON.stringify($input.item, null, 2));\n\n// Function to format the date in a more human-readable way\nfunction formatDate(dateString) {\n  if (!dateString) return '';\n  \n  try {\n    const date = new Date(dateString);\n    // Format: \"March 13, 2025 at 19:25\"\n    return date.toLocaleString('en-US', {\n      year: 'numeric',\n      month: 'long',\n      day: 'numeric',\n      hour: '2-digit',\n      minute: '2-digit'\n    });\n  } catch (error) {\n    console.log(\"Error formatting date:\", error);\n    return dateString; // Return original if parsing fails\n  }\n}\n\n// Check if this is a Twitter Search result with multiple tweets\nif ($input.item.json.tweets && Array.isArray($input.item.json.tweets) && $input.item.json.tweets.length > 0) {\n  // This is a collection of tweets\n  // In n8n, to output multiple items, we need to use an array of objects with a json property\n  const items = $input.item.json.tweets.map(tweet => {\n    return {\n      json: {\n        tweetId: tweet.id || '',\n        url: tweet.url || '',\n        content: tweet.text || '',\n        likeCount: tweet.likeCount || 0,\n        retweetCount: tweet.retweetCount || 0,\n        replyCount: tweet.replyCount || 0,\n        quoteCount: tweet.quoteCount || 0,\n        viewCount: tweet.viewCount || 0,\n        createdAt: formatDate(tweet.createdAt)\n      }\n    };\n  });\n  \n  console.log(`Processing ${items.length} tweets`);\n  \n  // Return all items\n  return items;\n} else {\n  // This is a single tweet, just extract and return its data\n  const tweetData = {\n    tweetId: $input.item.json.id || '',\n    url: $input.item.json.url || '',\n    content: $input.item.json.text || '',\n    likeCount: $input.item.json.likeCount || 0,\n    retweetCount: $input.item.json.retweetCount || 0,\n    replyCount: $input.item.json.replyCount || 0,\n    quoteCount: $input.item.json.quoteCount || 0,\n    viewCount: $input.item.json.viewCount || 0,\n    createdAt: formatDate($input.item.json.createdAt)\n  };\n  \n  console.log(\"Processing single tweet\");\n  \n  // Return as a single item\n  return {\n    json: tweetData\n  };\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        112
+      ],
+      "id": "8ab4249e-bb72-4643-a63b-379ec2e126cd",
+      "name": "Extract Info"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        112
+      ],
+      "id": "0ca5a722-d441-4750-af3e-7ad66135f334",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        384,
+        432
+      ],
+      "id": "e9a33bcc-ef26-47a4-acf7-e01098d4c140",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "url": "https://api.twitterapi.io/twitter/tweet/advanced_search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "Pakistan Army"
+            },
+            {
+              "name": "queryType",
+              "value": "latest"
+            },
+            {
+              "name": "cursor",
+              "value": "={{ $json.cursor }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        496,
+        112
+      ],
+      "id": "48793fb8-7e00-40b1-b0d7-902523320414",
+      "name": "Get Tweets"
+    },
+    {
+      "parameters": {
+        "content": "# Increasing Count & Cursor\n",
+        "height": 260,
+        "width": 1360,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        384
+      ],
+      "id": "f78bb221-3282-4f7b-a77e-ebb56105dc51",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Checking Count\n",
+        "height": 260,
+        "width": 500
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        32
+      ],
+      "id": "a684fa4d-e42a-4264-ad30-854c6c3426af",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# Scraping X",
+        "height": 260,
+        "width": 1360,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        32
+      ],
+      "id": "7eec5ba0-7375-4af0-bc19-2a17354a7823",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Noise Ingestion Pipeline(X)",
+        "height": 80,
+        "width": 500,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        336,
+        -128
+      ],
+      "id": "f1b13116-482e-43b1-87d9-62b893ecb03d",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## NEWS INGESTION \n",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        512,
+        704
+      ],
+      "id": "7f25ce6f-14ce-4834-8aaa-0447452e745b",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## NEWS NOISE INGESTION PIPELINE\n",
+        "height": 624,
+        "width": 1824,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        832
+      ],
+      "id": "aae9d049-fde9-4c49-9d5e-698372f2dfb1",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "url": "https://feeds.bbci.co.uk/news/rss.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        944
+      ],
+      "id": "37615e43-be0f-4f34-a6e3-c8e07d54755a",
+      "name": "BBC NEWS"
+    },
+    {
+      "parameters": {
+        "url": "https://www.dawn.com/feeds/home",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        1264
+      ],
+      "id": "d59c0ab3-9e64-4851-97e0-e82af0792731",
+      "name": "Dawn"
+    },
+    {
+      "parameters": {
+        "url": "https://www.aljazeera.com/xml/rss/all.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        1104
+      ],
+      "id": "3e3f2e3c-25c5-41a2-8c26-4bae7016012a",
+      "name": "Aljazeera"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -240,
+        1104
+      ],
+      "id": "615a635d-79dd-4707-bb61-e293e2c58e42",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pure JS SHA-256 implementation\nfunction sha256(ascii) {\n  function rightRotate(value, amount) {\n    return (value >>> amount) | (value << (32 - amount));\n  }\n\n  var mathPow = Math.pow;\n  var maxWord = mathPow(2, 32);\n  var lengthProperty = 'length';\n  var i, j; // Used as a counter across the whole file\n  var result = '';\n\n  var words = [];\n  var asciiBitLength = ascii[lengthProperty] * 8;\n\n  var hash = [], k = [];\n  var primeCounter = 0;\n\n  var isComposite = {};\n  for (var candidate = 2; primeCounter < 64; candidate++) {\n    if (!isComposite[candidate]) {\n      for (i = 0; i < 313; i += candidate) {\n        isComposite[i] = candidate;\n      }\n      hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;\n      k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;\n    }\n  }\n\n  ascii += '\\x80'; // Append '1' bit (plus zero padding)\n  while ((ascii[lengthProperty] % 64) - 56) ascii += '\\x00';\n  for (i = 0; i < ascii[lengthProperty]; i++) {\n    j = ascii.charCodeAt(i);\n    if (j >> 8) return;\n    words[i >> 2] |= j << ((3 - (i % 4)) * 8);\n  }\n  words[words[lengthProperty]] = (asciiBitLength / maxWord) | 0;\n  words[words[lengthProperty]] = asciiBitLength;\n\n  for (j = 0; j < words[lengthProperty]; ) {\n    var w = words.slice(j, (j += 16));\n    var oldHash = hash.slice(0);\n    for (i = 0; i < 64; i++) {\n      var w15 = w[i - 15], w2 = w[i - 2];\n      var a = hash[0], e = hash[4];\n      var temp1 =\n        hash[7] +\n        (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25)) +\n        ((e & hash[5]) ^ (~e & hash[6])) +\n        (w[i] = i < 16 ? w[i] : w[i - 16] + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3)) + w[i - 7] + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10)) | 0);\n      var temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22)) + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));\n      hash = [(temp1 + temp2) | 0].concat(hash);\n      hash[4] = (hash[4] + temp1) | 0;\n      hash.pop();\n    }\n    for (i = 0; i < 8; i++) {\n      hash[i] = (hash[i] + oldHash[i]) | 0;\n    }\n  }\n\n  for (i = 0; i < 8; i++) {\n    for (j = 3; j + 1; j--) {\n      var b = (hash[i] >> (j * 8)) & 255;\n      result += ((b < 16 ? 0 : '') + b.toString(16));\n    }\n  }\n  return result;\n}\n\n// Map items and add hash\nreturn items.map(item => {\n  const text = (item.json.text || '').trim().toLowerCase();\n  const hash = sha256(text);\n\n  return {\n    json: {\n      ...item.json,\n      hash\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        496,
+        1104
+      ],
+      "id": "9e9f5a2c-a9b7-4f0c-a558-33372748ddda",
+      "name": "Hashing"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Minimum length for text to be considered\nconst MIN_LENGTH = 30;\n\n// Heuristic keywords for “real signal”\nconst SIGNAL_KEYWORDS = [\n    'cost', 'delay', 'failure', 'risk', 'compliance',\n    'lawsuit', 'penalty', 'recall', 'breach', 'downtime',\n    'problem', 'issue', 'slow', 'error', 'security'\n];\n\n// Helper: check if any keyword exists in text\nfunction containsSignal(text) {\n    const lower = text.toLowerCase();\n    return SIGNAL_KEYWORDS.some(k => lower.includes(k));\n}\n\n// Filter items\nreturn items.filter(item => {\n    const text = (item.json.raw_text || '').trim();\n\n    // 1. Remove empty / too short text\n    if (text.length < MIN_LENGTH) return false;\n\n    // 2. Remove items with no signal keywords\n    if (!containsSignal(text)) return false;\n\n    // 3. Optional: remove items that are just URLs, numbers, emojis, or repetitive chars\n    if (/^[\\s\\d\\W]+$/.test(text)) return false;\n\n    return true; // keep the rest\n}).map(item => {\n    const text = (item.json.raw_text || '').trim();\n    return {\n        json: {\n            ...item.json,\n            length: text.length\n        }\n    };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        1104
+      ],
+      "id": "42c270ee-eff4-4913-afe5-0c7018183743",
+      "name": "Noise Filteration"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item=>{\n  const josn=item.json\n  //Extract Title\n  const title=(item.json.title||'').trim();\n  const desc=(item.json.description||item.json.body||item.json.content||'').trim();\n  //combining both\n  const raw_text=`${title} ${desc}`.trim();\n  const origin=(item.json.feed||item.json.source||'').trim();\n  const timestamp=(item.json.pubDate||item.json.date||'').trim();\n\n  return{\n    json:{\n      source:'rss',\n      origin:origin,\n      raw_text:raw_text,\n      timestamp:timestamp,\n      url:item.json.url||item.json.link||'',\n      length:raw_text.length\n  \n    }\n  }\n})"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        1104
+      ],
+      "id": "8437d227-0694-4f10-9de1-0fbc3fb96fb9",
+      "name": "Normalization"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1HuSVXXeZg43CDjIjx6tHKNLfFLSwvune_-RZi4ruaoQ",
+          "mode": "list",
+          "cachedResultName": "NNI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HuSVXXeZg43CDjIjx6tHKNLfFLSwvune_-RZi4ruaoQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HuSVXXeZg43CDjIjx6tHKNLfFLSwvune_-RZi4ruaoQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "origin",
+              "displayName": "origin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "raw_text",
+              "displayName": "raw_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "length",
+              "displayName": "length",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "hash",
+              "displayName": "hash",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        1104
+      ],
+      "id": "aa471666-80de-400a-95d0-ff734e0b2b91",
+      "name": "Append or update row in sheet"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "85deaff5-deec-43d5-af9d-f58397bf8710",
+              "name": "subreddits",
+              "value": "[\"technology\",\"gaming\",\"movies\",\"todayilearned\",\"worldnews\",\"interestingasfuck\",\"AskReddit\"]",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -16,
+        1872
+      ],
+      "id": "b463e5b5-2a9c-4447-8810-b1b0f31e7f84",
+      "name": "sub credential"
+    },
+    {
+      "parameters": {
+        "url": "=https://www.reddit.com/r/technology/hot.json?limit=50",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "n8n:trend.bot:v1.0 (by /u/YourRedditUsername)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        448,
+        1888
+      ],
+      "id": "e90c594f-b6c0-4273-81da-f24f4dfb7b06",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "subreddits",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        224,
+        1872
+      ],
+      "id": "c60d7740-34e7-48c4-884b-c05929e355be",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = [];\nconst posts = $input.first().json.data.children;\n\nfor (const post of posts) {\n  const url = `https://reddit.com${post.data.permalink}`;\n  \n  // Create a unique hash based on the URL (which never changes for a specific post)\n  // This uses a simple Base64 encoding of the URL string as a \"hash\"\n  const hash = Buffer.from(url).toString('base64').substring(0, 16);\n\n  results.push({\n    hash: hash, // Our unique identifier\n    title: post.data.title,\n    subreddit: post.data.subreddit,\n    upvotes: post.data.ups,\n    comments: post.data.num_comments,\n    url: url,\n    timestamp: new Date().toISOString()\n  });\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        1888
+      ],
+      "id": "2e4fd07c-603f-4ca4-8f6a-f993384961d3",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1HeGcPsm9ORWRGt3uGxDfoeKs2xBj2P8TZTF6M10kepk",
+          "mode": "list",
+          "cachedResultName": "redit",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HeGcPsm9ORWRGt3uGxDfoeKs2xBj2P8TZTF6M10kepk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HeGcPsm9ORWRGt3uGxDfoeKs2xBj2P8TZTF6M10kepk/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        768,
+        2096
+      ],
+      "id": "09db8996-bb2f-4103-bbe9-1daecccc7118",
+      "name": "Get row(s) in sheet"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the new data from Reddit (Input 0)\nconst newData = $input.all(); \n\n// 2. Get existing data from your Sheet. \n// WE USE A TRY/CATCH HERE TO PREVENT CRASHING IF THE SHEET IS EMPTY\nlet existingData = [];\ntry {\n  // Use the EXACT name of your node here\n  existingData = $(\"Google_Sheets_Get_All\").all(); \n} catch (e) {\n  // If the node hasn't run yet or is empty, we just use an empty list\n  existingData = [];\n}\n\n// 3. Create a set of existing hashes\nconst existingHashes = new Set(existingData.map(item => item.json.Hash || \"\"));\n\n// 4. Filter out duplicates\nconst uniqueNewData = newData.filter(item => {\n  return !existingHashes.has(item.json.hash);\n});\n\nreturn uniqueNewData;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        1904
+      ],
+      "id": "d9665955-3c77-4921-9986-10c7fcb1b89e",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "content": "##Redit Trend \n",
+        "height": 336,
+        "width": 864
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        1792
+      ],
+      "id": "189151d7-2643-4b9a-87e1-df404a157ab3",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1HeGcPsm9ORWRGt3uGxDfoeKs2xBj2P8TZTF6M10kepk",
+          "mode": "list",
+          "cachedResultName": "redit",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HeGcPsm9ORWRGt3uGxDfoeKs2xBj2P8TZTF6M10kepk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HeGcPsm9ORWRGt3uGxDfoeKs2xBj2P8TZTF6M10kepk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "subreddit",
+              "displayName": "subreddit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "upvotes",
+              "displayName": "upvotes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "comments",
+              "displayName": "comments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "thumbnail",
+              "displayName": "thumbnail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1264,
+        1872
+      ],
+      "id": "ce182f62-b8d9-4290-a366-e7c85ad459d4",
+      "name": "Append or update row in sheet1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Set Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Counter": {
+      "main": [
+        [
+          {
+            "node": "Get Tweets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Count": {
+      "main": [
+        [
+          {
+            "node": "Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Increase": {
+      "main": [
+        [
+          {
+            "node": "Increase Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increase Count": {
+      "main": [
+        [
+          {
+            "node": "Set Count and Cursor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Count and Cursor": {
+      "main": [
+        [
+          {
+            "node": "Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to Sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Info": {
+      "main": [
+        [
+          {
+            "node": "Add to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Set Increase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Tweets": {
+      "main": [
+        [
+          {
+            "node": "Extract Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BBC NEWS": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aljazeera": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dawn": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "BBC NEWS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Aljazeera",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Dawn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hashing": {
+      "main": [
+        [
+          {
+            "node": "Noise Filteration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalization": {
+      "main": [
+        [
+          {
+            "node": "Hashing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Noise Filteration": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sub credential": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "7b2aafb9-6cd7-4f3f-8b5f-89be501f8ca2",
+  "meta": {
+    "instanceId": "ad58554eed2663eec7267ffe4805da3a6dbabc9257ad08adce7a9733b0361126"
+  },
+  "id": "By_WYKwOUi2WBgO4V-JAo",
+  "tags": []
+}
