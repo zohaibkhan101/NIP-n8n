@@ -19,6 +19,17 @@ CREATE TABLE news_items (
     hash CHAR(64) NOT NULL UNIQUE,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
+CREATE TABLE reddit_posts (
+    id SERIAL PRIMARY KEY,
+    hash VARCHAR(50) UNIQUE,
+    title TEXT NOT NULL,
+    subreddit VARCHAR(100),
+    upvotes INTEGER,
+    comments INTEGER,
+    url TEXT,
+    timestamp TIMESTAMPTZ
+);
+
 ## To install pgadmin4
 docker pull dpage/pgadmin4
 
