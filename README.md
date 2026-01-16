@@ -19,4 +19,12 @@ CREATE TABLE news_items (
     hash CHAR(64) NOT NULL UNIQUE,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
+## To install pgadmin4
+docker pull dpage/pgadmin4
+
+docker run -d \
+  -p 5050:80 \
+  -e PGADMIN_DEFAULT_EMAIL="admin@local" \
+  -e PGADMIN_DEFAULT_PASSWORD="YourSecurePwd" \
+  dpage/pgadmin4
 
