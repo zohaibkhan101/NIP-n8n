@@ -1,0 +1,1599 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        768,
+        2960
+      ],
+      "id": "83c02342-7e6a-47ce-b00e-9355d80e1c84",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc47f40e-0850-4762-9efb-999608a2c096",
+              "name": "counter",
+              "value": "={{ $json.count }}",
+              "type": "number"
+            },
+            {
+              "id": "92034c06-3976-4099-a7a5-28a252204472",
+              "name": "cursor",
+              "value": "={{ $json.cursor }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1264,
+        2960
+      ],
+      "id": "b6b3ca0d-11c8-4429-86e6-8116b55d66ce",
+      "name": "Counter"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b2f9c3c3-32f4-48b4-b72f-76f03c35b750",
+              "name": "count",
+              "value": 1,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1056,
+        2960
+      ],
+      "id": "83b5e228-3fc1-4480-9e1f-30edb02e6e46",
+      "name": "Set Count"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "928894d0-2876-4996-9b1e-3d365b903771",
+              "leftValue": "={{ $('Counter').item.json.counter }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2160,
+        2960
+      ],
+      "id": "a0b7bca6-67cf-4878-b8c0-4f621d9ac64c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a252eb06-03cd-4e3f-84b0-2a46082606ca",
+              "name": "counter",
+              "value": "={{ $('Counter').item.json.counter }}",
+              "type": "number"
+            },
+            {
+              "id": "43222ff8-c354-4afa-b050-7d55fe30c865",
+              "name": "cursor",
+              "value": "={{ $('Get Tweets').item.json.next_cursor }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1488,
+        3280
+      ],
+      "id": "c155eb77-5f9d-4c30-94fe-01f34c6bd5c9",
+      "name": "Set Increase"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This code should be placed in an n8n Function node\n\n// Get the input items\nconst items = $input.all();\n\n// Process each item in the array\nreturn items.map(item => {\n  // Create a new value for the count field\n  let newCount = 1;\n  \n  // If there's an existing counter value, use it as a base\n  if (item.json && item.json.counter !== undefined) {\n    newCount = item.json.counter + 1;\n  }\n  \n  // Ensure json property exists\n  if (!item.json) {\n    item.json = {};\n  }\n  \n  // Set the value to the new field name \"count\"\n  item.json.count = newCount;\n  \n  // Return the modified item\n  return item;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1664,
+        3280
+      ],
+      "id": "bdd931fc-d6c1-441b-bba4-c6db3480e47b",
+      "name": "Increase Count"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5be1f203-28ea-4635-b42d-01f2a5bb367f",
+              "name": "count",
+              "value": "={{ $json.count }}",
+              "type": "string"
+            },
+            {
+              "id": "b68f8c17-c045-4b5b-8f8b-367ec72b72a3",
+              "name": "cursor",
+              "value": "={{ $('Set Increase').item.json.cursor }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1840,
+        3280
+      ],
+      "id": "67df42c6-94b9-4edf-9831-2b5580d4a193",
+      "name": "Set Count and Cursor"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1mQ3FTZY7IBI-Z7MYCAeIaLQcP8uxRSvRwXhIgLsVwxw",
+          "mode": "list",
+          "cachedResultName": "IGNP",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mQ3FTZY7IBI-Z7MYCAeIaLQcP8uxRSvRwXhIgLsVwxw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "tweetId",
+              "displayName": "tweetId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "likeCount",
+              "displayName": "likeCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "retweetCount",
+              "displayName": "retweetCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "replyCount",
+              "displayName": "replyCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "quoteCount",
+              "displayName": "quoteCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "viewCount",
+              "displayName": "viewCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "createdAt",
+              "displayName": "createdAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1808,
+        2960
+      ],
+      "id": "6c6aa76f-187c-4499-a1dd-894a9cb463b4",
+      "name": "Add to Sheet"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This approach handles both single tweets and collections\n// It focuses on properly formatting the output for n8n\n// First, let's log what we're working with for debugging\nconsole.log(\"Input item structure:\", JSON.stringify($input.item, null, 2));\n\n// Function to format the date in a more human-readable way\nfunction formatDate(dateString) {\n  if (!dateString) return '';\n  \n  try {\n    const date = new Date(dateString);\n    // Format: \"March 13, 2025 at 19:25\"\n    return date.toLocaleString('en-US', {\n      year: 'numeric',\n      month: 'long',\n      day: 'numeric',\n      hour: '2-digit',\n      minute: '2-digit'\n    });\n  } catch (error) {\n    console.log(\"Error formatting date:\", error);\n    return dateString; // Return original if parsing fails\n  }\n}\n\n// Check if this is a Twitter Search result with multiple tweets\nif ($input.item.json.tweets && Array.isArray($input.item.json.tweets) && $input.item.json.tweets.length > 0) {\n  // This is a collection of tweets\n  // In n8n, to output multiple items, we need to use an array of objects with a json property\n  const items = $input.item.json.tweets.map(tweet => {\n    return {\n      json: {\n        tweetId: tweet.id || '',\n        url: tweet.url || '',\n        content: tweet.text || '',\n        likeCount: tweet.likeCount || 0,\n        retweetCount: tweet.retweetCount || 0,\n        replyCount: tweet.replyCount || 0,\n        quoteCount: tweet.quoteCount || 0,\n        viewCount: tweet.viewCount || 0,\n        createdAt: formatDate(tweet.createdAt)\n      }\n    };\n  });\n  \n  console.log(`Processing ${items.length} tweets`);\n  \n  // Return all items\n  return items;\n} else {\n  // This is a single tweet, just extract and return its data\n  const tweetData = {\n    tweetId: $input.item.json.id || '',\n    url: $input.item.json.url || '',\n    content: $input.item.json.text || '',\n    likeCount: $input.item.json.likeCount || 0,\n    retweetCount: $input.item.json.retweetCount || 0,\n    replyCount: $input.item.json.replyCount || 0,\n    quoteCount: $input.item.json.quoteCount || 0,\n    viewCount: $input.item.json.viewCount || 0,\n    createdAt: formatDate($input.item.json.createdAt)\n  };\n  \n  console.log(\"Processing single tweet\");\n  \n  // Return as a single item\n  return {\n    json: tweetData\n  };\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1632,
+        2960
+      ],
+      "id": "1ecc4ba2-bb0e-4529-808e-8eebc8afa041",
+      "name": "Extract Info"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2384,
+        2960
+      ],
+      "id": "d5344aa2-a1c2-4d75-9216-78267d5da096",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        3280
+      ],
+      "id": "267f72ae-9e2f-42b1-ac68-cc23b596c392",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "url": "https://api.twitterapi.io/twitter/tweet/advanced_search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "Pakistan Army"
+            },
+            {
+              "name": "queryType",
+              "value": "latest"
+            },
+            {
+              "name": "cursor",
+              "value": "={{ $json.cursor }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        2960
+      ],
+      "id": "02e7e11f-1b86-4c17-9548-b59bdc069e00",
+      "name": "Get Tweets"
+    },
+    {
+      "parameters": {
+        "content": "# Increasing Count & Cursor\n",
+        "height": 260,
+        "width": 1360,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        656,
+        3232
+      ],
+      "id": "f258458d-ff0a-4cf0-ae96-51b40a4b12ad",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Checking Count\n",
+        "height": 260,
+        "width": 500
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        2880
+      ],
+      "id": "e9c53e1b-f564-4500-b940-264606239f0a",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# Scraping X",
+        "height": 260,
+        "width": 1360,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        656,
+        2880
+      ],
+      "id": "8c14a854-22fb-478c-b477-c173f0568656",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Noise Ingestion Pipeline(X)",
+        "height": 80,
+        "width": 500,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        2720
+      ],
+      "id": "4951f039-9774-44ee-8c7e-6a58944b31c9",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## NEWS INGESTION \n",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        3552
+      ],
+      "id": "b02ff003-fce2-400b-9486-924200374533",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## NEWS NOISE INGESTION PIPELINE\n",
+        "height": 2032,
+        "width": 1744,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        560,
+        3616
+      ],
+      "id": "379a565f-0154-4ecc-8bc5-95bf9fa8495b",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "url": "https://feeds.bbci.co.uk/news/rss.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        4000
+      ],
+      "id": "e9e1cbab-62e3-4751-894a-ec96f9a9e685",
+      "name": "BBC NEWS"
+    },
+    {
+      "parameters": {
+        "url": "https://www.dawn.com/feeds/home",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        4256
+      ],
+      "id": "4e64a275-5bd6-48a3-a6fd-2eea54c0fc0e",
+      "name": "Dawn"
+    },
+    {
+      "parameters": {
+        "url": "https://www.aljazeera.com/xml/rss/all.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        4128
+      ],
+      "id": "87da6404-a4c9-4604-9f90-128741eaa0de",
+      "name": "Aljazeera"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        3776
+      ],
+      "id": "9bd1aeaa-4af0-4163-b0ce-235ec7f31083",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pure JS SHA-256 function (your existing function)\nfunction sha256(ascii) {\n  function rightRotate(value, amount) {\n    return (value >>> amount) | (value << (32 - amount));\n  }\n\n  const mathPow = Math.pow;\n  const maxWord = mathPow(2, 32);\n  let result = '';\n\n  const words = [];\n  const asciiBitLength = ascii.length * 8;\n\n  const hash = [];\n  const k = [];\n  let primeCounter = 0;\n\n  const isComposite = {};\n  for (let candidate = 2; primeCounter < 64; candidate++) {\n    if (!isComposite[candidate]) {\n      for (let i = 0; i < 313; i += candidate) {\n        isComposite[i] = candidate;\n      }\n      hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;\n      k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;\n    }\n  }\n\n  ascii += '\\x80';\n  while ((ascii.length % 64) !== 56) ascii += '\\x00';\n\n  for (let i = 0; i < ascii.length; i++) {\n    const j = ascii.charCodeAt(i);\n    words[i >> 2] |= j << ((3 - i) % 4) * 8;\n  }\n\n  words[words.length] = (asciiBitLength / maxWord) | 0;\n  words[words.length] = asciiBitLength;\n\n  for (let j = 0; j < words.length;) {\n    const w = words.slice(j, (j += 16));\n    const oldHash = hash.slice(0);\n\n    for (let i = 0; i < 64; i++) {\n      const w15 = w[i - 15], w2 = w[i - 2];\n      const a = hash[0], e = hash[4];\n\n      const temp1 =\n        hash[7] +\n        (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25)) +\n        ((e & hash[5]) ^ (~e & hash[6])) +\n        k[i] +\n        (w[i] = i < 16\n          ? w[i]\n          : (w[i - 16] +\n             (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3)) +\n             w[i - 7] +\n             (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))) | 0);\n\n      const temp2 =\n        (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22)) +\n        ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));\n\n      hash.unshift((temp1 + temp2) | 0);\n      hash[4] = (hash[4] + temp1) | 0;\n      hash.pop();\n    }\n\n    for (let i = 0; i < 8; i++) {\n      hash[i] = (hash[i] + oldHash[i]) | 0;\n    }\n  }\n\n  for (let i = 0; i < 8; i++) {\n    for (let j = 3; j >= 0; j--) {\n      const b = (hash[i] >> (j * 8)) & 255;\n      result += (b < 16 ? '0' : '') + b.toString(16);\n    }\n  }\n\n  return result;\n}\n\n// === Robust processing for all items ===\nconst output = [];\n\nfor (const item of items) {\n  // Skip items missing raw_text\n  if (!item.json.raw_text || typeof item.json.raw_text !== 'string') {\n    // Optional: log skipped items\n    console.log('Skipping item, missing raw_text:', item);\n    continue;\n  }\n\n  // Compute hash of raw_text\n  const hash = sha256(item.json.raw_text.trim());\n\n  // Push output item\n  output.push({\n    json: {\n      ...item.json,\n      hash\n    }\n  });\n}\n\n// Return all processed items\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        4592
+      ],
+      "id": "7401e350-8ce9-4bb5-b4c6-e160736e30bf",
+      "name": "Hashing"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Minimum length for text to be considered\nconst MIN_LENGTH = 30;\n\n// Heuristic keywords for “real signal”\nconst SIGNAL_KEYWORDS = [\n    'cost', 'delay', 'failure', 'risk', 'compliance',\n    'lawsuit', 'penalty', 'recall', 'breach', 'downtime',\n    'problem', 'issue', 'slow', 'error', 'security'\n];\n\n// Helper: check if any keyword exists in text\nfunction containsSignal(text) {\n    const lower = text.toLowerCase();\n    return SIGNAL_KEYWORDS.some(k => lower.includes(k));\n}\n\n// Filter items\nreturn items.filter(item => {\n    const text = (item.json.raw_text || '').trim();\n\n    // 1. Remove empty / too short text\n    if (text.length < MIN_LENGTH) return false;\n\n    // 2. Remove items with no signal keywords\n    if (!containsSignal(text)) return false;\n\n    // 3. Optional: remove items that are just URLs, numbers, emojis, or repetitive chars\n    if (/^[\\s\\d\\W]+$/.test(text)) return false;\n\n    return true; // keep the rest\n}).map(item => {\n    const text = (item.json.raw_text || '').trim();\n    return {\n        json: {\n            ...item.json,\n            length: text.length\n        }\n    };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        4816
+      ],
+      "id": "f72a4a18-5617-4f6e-9558-9d054498462f",
+      "name": "Noise Filteration"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item=>{\n  const josn=item.json\n  //Extract Title\n  const title=(item.json.title||'').trim();\n  const desc=(item.json.description||item.json.body||item.json.content||'').trim();\n  //combining both\n  const raw_text=`${title} ${desc}`.trim();\n  const origin=(item.json.feed||item.json.source||'').trim();\n  const timestamp=(item.json.pubDate||item.json.date||'').trim();\n\n  return{\n    json:{\n      source:'rss',\n      origin:origin,\n      raw_text:raw_text,\n      timestamp:timestamp,\n      url:item.json.url||item.json.link||'',\n      length:raw_text.length\n  \n    }\n  }\n})"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1152,
+        4592
+      ],
+      "id": "7cd1c484-c350-4b6b-8e96-fceafa2b6dd7",
+      "name": "Normalization"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "85deaff5-deec-43d5-af9d-f58397bf8710",
+              "name": "subreddits",
+              "value": "[\"technology\",\"gaming\",\"movies\",\"todayilearned\",\"worldnews\",\"interestingasfuck\",\"AskReddit\"]",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -912,
+        3296
+      ],
+      "id": "6bf3b33c-8336-40cc-8282-f90f76021a6f",
+      "name": "sub credential"
+    },
+    {
+      "parameters": {
+        "url": "=https://www.reddit.com/r/technology/hot.json?limit=50",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "n8n:trend.bot:v1.0 (by /u/YourRedditUsername)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -464,
+        3232
+      ],
+      "id": "5e995a49-4fdf-4084-8ff9-7b987f9babe1",
+      "name": "HTTP Request",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "subreddits",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        3280
+      ],
+      "id": "e35b0381-c415-4cbe-8e33-375b1f56b6a6",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = [];\nconst posts = $input.first().json.data.children;\n\nfor (const post of posts) {\n  const url = `https://reddit.com${post.data.permalink}`;\n  \n  // Create a unique hash based on the URL (which never changes for a specific post)\n  // This uses a simple Base64 encoding of the URL string as a \"hash\"\n  const hash = Buffer.from(url).toString('base64').substring(0, 16);\n\n  results.push({\n    hash: hash, // Our unique identifier\n    title: post.data.title,\n    subreddit: post.data.subreddit,\n    upvotes: post.data.ups,\n    comments: post.data.num_comments,\n    url: url,\n    timestamp: new Date().toISOString()\n  });\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        3296
+      ],
+      "id": "218aabe6-a773-4890-be60-0c2847368cf8",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1HeGcPsm9ORWRGt3uGxDfoeKs2xBj2P8TZTF6M10kepk",
+          "mode": "list",
+          "cachedResultName": "redit",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HeGcPsm9ORWRGt3uGxDfoeKs2xBj2P8TZTF6M10kepk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HeGcPsm9ORWRGt3uGxDfoeKs2xBj2P8TZTF6M10kepk/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        272,
+        3232
+      ],
+      "id": "b5b7cc70-4eb0-47fc-9b36-cae7b834f438",
+      "name": "Get row(s) in sheet"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the new data from Reddit (Input 0)\nconst newData = $input.all(); \n\n// 2. Get existing data from your Sheet. \n// WE USE A TRY/CATCH HERE TO PREVENT CRASHING IF THE SHEET IS EMPTY\nlet existingData = [];\ntry {\n  // Use the EXACT name of your node here\n  existingData = $(\"Google_Sheets_Get_All\").all(); \n} catch (e) {\n  // If the node hasn't run yet or is empty, we just use an empty list\n  existingData = [];\n}\n\n// 3. Create a set of existing hashes\nconst existingHashes = new Set(existingData.map(item => item.json.Hash || \"\"));\n\n// 4. Filter out duplicates\nconst uniqueNewData = newData.filter(item => {\n  return !existingHashes.has(item.json.hash);\n});\n\nreturn uniqueNewData;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        3136
+      ],
+      "id": "bb423ee6-5afe-4f38-8134-88f36202d208",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "content": "## Redit Trend \n",
+        "height": 688,
+        "width": 1504
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1008,
+        2896
+      ],
+      "id": "40aec33c-18f4-4226-bd23-2dc88326f8b6",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1HeGcPsm9ORWRGt3uGxDfoeKs2xBj2P8TZTF6M10kepk",
+          "mode": "list",
+          "cachedResultName": "redit",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HeGcPsm9ORWRGt3uGxDfoeKs2xBj2P8TZTF6M10kepk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HeGcPsm9ORWRGt3uGxDfoeKs2xBj2P8TZTF6M10kepk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "subreddit",
+              "displayName": "subreddit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "upvotes",
+              "displayName": "upvotes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "comments",
+              "displayName": "comments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "thumbnail",
+              "displayName": "thumbnail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -208,
+        2992
+      ],
+      "id": "bef33208-bfc3-42be-ab16-32ed2b5c29dd",
+      "name": "Append or update row in sheet1"
+    },
+    {
+      "parameters": {
+        "url": "https://www.geo.tv/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        720,
+        5408
+      ],
+      "id": "c538ef0e-8a12-4b51-9fa2-74054f477305",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "url": "https://www.dawn.com/feeds/home",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        4416
+      ],
+      "id": "58633c24-9eda-4089-a82d-f845d04149d8",
+      "name": "Dawn1"
+    },
+    {
+      "parameters": {
+        "url": "https://tribune.com.pk/feed/home",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        4544
+      ],
+      "id": "b8d539d1-0429-4274-afc1-93bc17cda9f1",
+      "name": "Express"
+    },
+    {
+      "parameters": {
+        "url": "https://www.thenews.com.pk/rss/1/1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        4688
+      ],
+      "id": "ba448cc9-6934-4ce4-9d19-748681315939",
+      "name": "The News International"
+    },
+    {
+      "parameters": {
+        "url": "https://www.brecorder.com/feeds/latest-news",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        4880
+      ],
+      "id": "58cfd16d-4597-46fa-b61f-b9c5f997725c",
+      "name": "Business Recorder"
+    },
+    {
+      "parameters": {
+        "url": "https://www.pakistantoday.com.pk/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        5024
+      ],
+      "id": "1235ea4d-bc35-411c-8907-3d6380309b65",
+      "name": "Pakistan Today"
+    },
+    {
+      "parameters": {
+        "url": "https://dailytimes.com.pk/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        5248
+      ],
+      "id": "c9145e73-e4a1-449f-86aa-942966150fb3",
+      "name": "Daily Times"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "title",
+              "cssSelector": ".heading a",
+              "returnArray": true
+            },
+            {
+              "key": "Summary",
+              "cssSelector": ".m_except p",
+              "returnArray": true
+            },
+            {
+              "key": "link",
+              "cssSelector": ".heading a",
+              "returnValue": "attribute",
+              "attribute": "href",
+              "returnArray": true
+            },
+            {
+              "key": "category",
+              "cssSelector": ".heading a",
+              "returnValue": "attribute",
+              "attribute": "data-vr-contentbox",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        928,
+        5408
+      ],
+      "id": "3f945ef3-74ae-46c4-9420-b1bc350537e5",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the input item (the one JSON with arrays)\nconst input = $input.item.json;\n\n// Determine the number of news items\nconst count = input.link.length;\n\n// Create an array of news objects\nconst news = [];\n\nfor (let i = 0; i < count; i++) {\n    news.push({\n        json: {\n            link: input.link[i] || null,\n            category: input.category[i] || null,\n            title: input.title?.[i] || null,\n            summary: input.Summary?.[i] || null\n        }\n    });\n}\n\nreturn news;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1152,
+        5392
+      ],
+      "id": "597d6b95-96b8-4ad7-a43e-3f72048b1088",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tweets",
+          "mode": "list",
+          "cachedResultName": "tweets"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "tweet_id": "={{ $json.tweetId }}",
+            "url": "={{ $json.url }}",
+            "content": "={{ $json.content }}",
+            "like_count": "={{ $json.likeCount }}",
+            "retweet_count": "={{ $json.retweetCount }}",
+            "reply_count": "={{ $json.replyCount }}",
+            "quote_count": "={{ $json.quoteCount }}",
+            "view_count": "={{ $json.viewCount }}",
+            "created_at": "={{ $json.createdAt }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1808,
+        3168
+      ],
+      "id": "606f1acc-0b95-4068-9bb6-8574ee4feefd",
+      "name": "Postgres Tweets",
+      "credentials": {
+        "postgres": {
+          "id": "VxnD0fCCPMGTkmGI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "reddit_posts",
+          "mode": "list",
+          "cachedResultName": "reddit_posts"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "hash": "={{ $json.hash }}",
+            "title": "={{ $json.title }}",
+            "subreddit": "={{ $json.subreddit }}",
+            "upvotes": "={{ $json.upvotes }}",
+            "comments": "={{ $json.comments }}",
+            "url": "={{ $json.url }}",
+            "thumbnail": "={{ $json.thumbnail }}",
+            "timestamp": "={{ $json.timestamp }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        -208,
+        3200
+      ],
+      "id": "fb0514d9-a608-4095-8728-f983055e81c2",
+      "name": "Postgres Reddit",
+      "credentials": {
+        "postgres": {
+          "id": "VxnD0fCCPMGTkmGI",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "news_items",
+          "mode": "list",
+          "cachedResultName": "news_items"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "source": "={{ $json.source }}",
+            "origin": "={{ $json.origin }}",
+            "published_at": "={{ $json.timestamp }}",
+            "raw_text": "={{ $json.raw_text }}",
+            "url": "={{ $json.url }}",
+            "content_length": "={{ $json.length }}",
+            "hash": "={{ $json.hash }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "origin",
+              "displayName": "origin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "raw_text",
+              "displayName": "raw_text",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "published_at",
+              "displayName": "published_at",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "content_length",
+              "displayName": "content_length",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "hash",
+              "displayName": "hash",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "skipOnConflict": true
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1824,
+        4592
+      ],
+      "id": "7e51cd97-2283-420c-9c42-747f5acf56c3",
+      "name": "Postgres News",
+      "alwaysOutputData": false,
+      "credentials": {
+        "postgres": {
+          "id": "VxnD0fCCPMGTkmGI",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Set Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Counter": {
+      "main": [
+        [
+          {
+            "node": "Get Tweets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Count": {
+      "main": [
+        [
+          {
+            "node": "Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Increase": {
+      "main": [
+        [
+          {
+            "node": "Increase Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increase Count": {
+      "main": [
+        [
+          {
+            "node": "Set Count and Cursor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Count and Cursor": {
+      "main": [
+        [
+          {
+            "node": "Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to Sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Info": {
+      "main": [
+        [
+          {
+            "node": "Add to Sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Postgres Tweets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Set Increase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Tweets": {
+      "main": [
+        [
+          {
+            "node": "Extract Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BBC NEWS": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aljazeera": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dawn": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "BBC NEWS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Aljazeera",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Dawn",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Dawn1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Express",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "The News International",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Business Recorder",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Pakistan Today",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Daily Times",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hashing": {
+      "main": [
+        [
+          {
+            "node": "Postgres News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalization": {
+      "main": [
+        [
+          {
+            "node": "Hashing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Noise Filteration": {
+      "main": [
+        []
+      ]
+    },
+    "sub credential": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Postgres Reddit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dawn1": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Express": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "The News International": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Business Recorder": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pakistan Today": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Times": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "89194eae-ce4f-4bdd-a6b5-0128439d0af7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80bfc4ac088d0844f410327e93a8eabc0fb773da712c0a688cc4d956ecc46e17"
+  },
+  "id": "lustiptYZCo6mK7QzvW-H",
+  "tags": []
+}
