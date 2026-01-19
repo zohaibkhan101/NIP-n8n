@@ -1,12 +1,7 @@
 # NIP-n8n
 # NIP-n8n
 ## To Create Postgres Image in Docker 
-sudo docker run -it --name postgres \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=123456 \
-  -e POSTGRES_DB=postgres \
-  --network bridge \
-  postgres
+sudo docker run -it --name postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=123456 -e POSTGRES_DB=postgres -v pgdata:/var/lib/postgresql -p 5433:5432 --network bridge postgres 
 ## TO create table in db:
 CREATE TABLE news_items (
     id BIGSERIAL PRIMARY KEY,
