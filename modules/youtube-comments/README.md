@@ -1,6 +1,6 @@
 # YouTube Comments Ingestion Module (NIP)
 
-A production-ready **n8n module** that fetches YouTube comments using the **YouTube Data API v3**, normalizes them, and upserts them into **PostgreSQL** for analytics and BI tools like **Power BI**.
+A MVP for **n8n module** that fetches YouTube comments using the **YouTube Data API v3**, normalizes them, and upserts them into **PostgreSQL** for analytics and BI tools like **Power BI**.
 
 ---
 
