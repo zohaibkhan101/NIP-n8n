@@ -149,6 +149,9 @@ You can now analyze:
 - Keyword patterns
 
 ---
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> 4b905a1 (Update README.md)
