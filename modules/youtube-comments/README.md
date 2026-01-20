@@ -1,187 +1,154 @@
-📌 What This Module Does
+# YouTube Comments Ingestion Module (NIP)
 
-The YouTube Comments module:
+A production-ready **n8n module** that fetches YouTube comments using the **YouTube Data API v3**, normalizes them, and upserts them into **PostgreSQL** for analytics and BI tools like **Power BI**.
 
-Fetches viral / high-engagement YouTube videos
+---
 
-Extracts top-level comments via YouTube Data API v3
+## What This Module Does
 
-Normalizes comments into a structured schema
+- Fetches **viral / high‑engagement YouTube videos**
+- Extracts **top‑level comments** via YouTube Data API v3
+- Normalizes comments into a **structured schema**
+- **Upserts** data into PostgreSQL (no duplicates)
+- Makes comments **BI‑ready** for Power BI / analytics
+- Designed to plug into the **NIP (Network Intelligence Platform)**
 
-Upserts comments into PostgreSQL
+---
 
-Prevents duplicates using comment_id
+## Architecture Overview
 
-Makes data BI-ready for Power BI / analytics
-
-🧱 Architecture Overview
-YouTube Data API
-      ↓
+```
+YouTube Data API v3
+        |
+        v
 n8n Workflow
-  ├── Fetch videos
-  ├── Fetch comments
-  ├── Normalize JSON
-  └── Upsert to PostgreSQL
-      ↓
-PostgreSQL (youtube_comments table)
-      ↓
+  ├─ Fetch Videos
+  ├─ Fetch Comments
+  ├─ Normalize JSON
+  └─ Upsert to PostgreSQL
+        |
+        v
+PostgreSQL (youtube_comments)
+        |
+        v
 Power BI / Analytics
+```
 
-🔑 YouTube API Configuration (Required)
+---
 
-This module uses the YouTube Data API v3.
+## Folder Structure
 
-API Authentication
+```
+modules/
+└── youtube-comments/
+    ├── README.md
+    ├── workflow/
+    │   └── youtube_comments_ingestion.json
+    ├── sql/
+    │   └── 001_create_youtube_comments.sql
+```
 
-Authentication type: API Key
+> Everything related to this module lives **inside one folder**.
 
-No OAuth
+---
 
-No IP restriction required
+## PostgreSQL Schema
 
-Steps
+Table: `public.youtube_comments`
 
-Go to Google Cloud Console
+| Column        | Type          | Description |
+|--------------|---------------|-------------|
+| id           | BIGSERIAL PK  | Internal ID |
+| comment_id   | TEXT UNIQUE   | YouTube comment ID |
+| video_id     | TEXT          | YouTube video ID |
+| text         | TEXT          | Comment text |
+| author       | TEXT          | Comment author |
+| likes        | INT           | Like count |
+| published_at | TIMESTAMPTZ   | Comment publish time |
+| region       | TEXT          | Region (e.g. PK) |
+| source       | TEXT          | youtube_api |
+| created_at   | TIMESTAMPTZ   | Insert timestamp |
 
-Enable YouTube Data API v3
+---
 
-Create an API Key
+## Database Setup (Docker)
 
-(Optional but recommended)
-Restrict the key to:
+```bash
+docker run -d   --name yt-postgres   -e POSTGRES_PASSWORD=postgres   -p 5433:5432   postgres:15
+```
 
-API: YouTube Data API v3
+Optional pgAdmin:
 
-Application: Server / backend
+```bash
+docker run -d   --name pgadmin   -p 5050:80   -e PGADMIN_DEFAULT_EMAIL=admin@admin.com   -e PGADMIN_DEFAULT_PASSWORD=admin123   dpage/pgadmin4
+```
 
-Where the API key is used
+---
 
-In n8n HTTP Request nodes, under query parameter:
+## n8n Workflow
 
-key = YOUR_YOUTUBE_API_KEY
+### Import Workflow
 
+1. Open n8n
+2. Click **Import workflow**
+3. Select:
+```
+modules/youtube-comments/workflow/youtube_comments_ingestion.json
+```
+4. Save
 
-⚠️ Do not commit API keys to GitHub
-Use n8n credentials or environment variables.
+---
 
-🗄️ Database Setup (PostgreSQL)
-Docker (recommended)
-docker run -d \
-  --name yt-postgres \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=YOUR_PASSWORD \
-  -e POSTGRES_DB=postgres \
-  -p 5433:5432 \
-  postgres:15
+## YouTube API Configuration
 
-pgAdmin (optional UI)
-docker run -d \
-  --name pgadmin \
-  -p 5050:80 \
-  -e PGADMIN_DEFAULT_EMAIL=admin@admin.com \
-  -e PGADMIN_DEFAULT_PASSWORD=admin123 \
-  dpage/pgadmin4
+This module uses **YouTube Data API v3**
 
+- **Auth type:** API Key
+- **No OAuth**
+- **No IP restriction**
+- Created via **Google Cloud Console**
 
-Access pgAdmin at:
-👉 http://localhost:5050
+Add the API key in the HTTP Request nodes.
 
-🧾 Database Schema
+---
 
-Create the table once:
+## PostgreSQL Credentials (n8n)
 
-CREATE TABLE youtube_comments (
-  id BIGSERIAL PRIMARY KEY,
-  comment_id TEXT UNIQUE,
-  video_id TEXT NOT NULL,
-  text TEXT NOT NULL,
-  author TEXT,
-  likes INTEGER,
-  published_at TIMESTAMPTZ,
-  region TEXT,
-  source TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+| Field | Value |
+|------|------|
+| Host | `host.docker.internal` |
+| Port | `5433` |
+| Database | `postgres` |
+| User | `postgres` |
+| SSL | Disabled |
 
+---
 
-comment_id is used for deduplication (upsert key)
+## Power BI Integration
 
-🔄 n8n Workflow Setup
-Required Nodes
+1. Open **Power BI Desktop**
+2. Get Data → **PostgreSQL**
+3. Server:
+```
+localhost
+```
+4. Database:
+```
+postgres
+```
+5. Select table:
+```
+public.youtube_comments
+```
+6. Use **Import mode**
 
-HTTP Request — Video Fetch
+You can now analyze:
+- Most commented videos
+- Comment trends by date
+- Engagement by author
+- Keyword patterns
 
-Code (JavaScript) — Extract video IDs
+---
 
-HTTP Request — Comments Fetch
 
-Code (JavaScript) — Normalize comments
 
-Postgres — Insert or Update rows
-
-Postgres Node Configuration (Important)
-
-Operation: Insert or Update
-
-Schema: public
-
-Table: youtube_comments
-
-Mapping Mode: ✅ Map Automatically
-
-Match column: comment_id
-
-Why automatic mapping?
-
-Ensures JSON fields align exactly with table columns and avoids expression leaks.
-
-📊 Power BI Integration
-
-This module is designed to work directly with Power BI.
-
-Connection
-
-Host: localhost
-
-Port: 5433
-
-Database: postgres
-
-User: postgres
-
-Mode: Import (recommended)
-
-Suggested Analytics
-
-Most commented videos
-
-Most liked comments per video
-
-Comment volume over time
-
-Keyword / sentiment analysis (via Power BI or downstream NLP)
-
-🧠 Design Decisions
-
-Postgres instead of Sheets → scalability
-
-Upsert by comment_id → idempotent runs
-
-No IP-locked auth → simpler CI/CD
-
-BI-ready schema → zero transformation in Power BI
-
-⚠️ Notes & Gotchas
-
-Running the workflow multiple times will not duplicate comments
-
-YouTube API has quota limits — batch responsibly
-
-Only top-level comments are ingested (no replies by default)
-
-🧩 Files Related to This Module
-sql/
- └── 001_create_youtube_comments.sql
-
-*.json
- └── n8n workflow exports (YouTube ingestion)
