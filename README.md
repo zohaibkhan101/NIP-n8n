@@ -34,3 +34,28 @@ docker run -d \
   -e PGADMIN_DEFAULT_PASSWORD="YourSecurePwd" \
   dpage/pgadmin4
 
+## Metabase Open Source quick start
+Use this quick start to run the Open Source version of Metabase locally. See below for instructions on running Metabase in production.
+
+Assuming you have Docker installed and running, get the latest Docker image:
+
+docker pull metabase/metabase:latest
+
+    
+Then start the Metabase container:
+
+docker run -d -p 3000:3000 --name metabase metabase/metabase
+    
+Copy
+
+    
+This will launch an Metabase server on port 3000 by default.
+
+Optional: to view the logs as your Open Source Metabase initializes, run:
+
+docker logs -f metabase
+    
+Copy
+
+    
+Once startup completes, you can access your Open Source Metabase at http://localhost:3000.
