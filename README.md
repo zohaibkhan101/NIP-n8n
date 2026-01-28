@@ -25,6 +25,37 @@ CREATE TABLE reddit_posts (
     timestamp TIMESTAMPTZ
 );
 
+CREATE TABLE twitter_tweets (
+    id BIGSERIAL PRIMARY KEY,
+
+    tweet_id VARCHAR(64) UNIQUE NOT NULL,
+    tweet_text TEXT NOT NULL,
+
+    author_id VARCHAR(64),
+    author_username VARCHAR(100),
+    author_name VARCHAR(150),
+
+    created_at TIMESTAMPTZ,
+    language VARCHAR(10),
+
+    like_count INT DEFAULT 0,
+    retweet_count INT DEFAULT 0,
+    reply_count INT DEFAULT 0,
+    quote_count INT DEFAULT 0,
+
+    query_keyword TEXT,            -- e.g. "Pakistan Army"
+    query_type VARCHAR(50),         -- latest / top / etc
+    source VARCHAR(50) DEFAULT 'twitterapi',
+
+    sentiment_score REAL,           -- optional (-1 to 1)
+    sentiment_label VARCHAR(20),    -- positive / neutral / negative
+
+    raw_payload JSONB,              -- full API response (for safety)
+
+    inserted_at TIMESTAMPTZ DEFAULT now()
+);
+
+
 ## To install pgadmin4
 docker pull dpage/pgadmin4
 
