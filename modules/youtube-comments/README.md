@@ -130,7 +130,7 @@ Add the API key in the HTTP Request nodes.
 2. Get Data → **PostgreSQL**
 3. Server:
 ```
-localhost
+localhost:5433
 ```
 4. Database:
 ```
@@ -149,6 +149,4 @@ You can now analyze:
 - Keyword patterns
 
 ---
-
-
 
