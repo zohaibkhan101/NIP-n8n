@@ -1,0 +1,1736 @@
+{
+  "name": "YouTube Global Pulse",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        240
+      ],
+      "id": "b018a3d2-cdd0-4855-8a68-05a6c570ec73",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc47f40e-0850-4762-9efb-999608a2c096",
+              "name": "counter",
+              "value": "={{ $json.count }}",
+              "type": "number"
+            },
+            {
+              "id": "92034c06-3976-4099-a7a5-28a252204472",
+              "name": "cursor",
+              "value": "={{ $json.cursor }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -16,
+        240
+      ],
+      "id": "62dc92ab-6d9b-41fd-80d5-8a9b755f225c",
+      "name": "Counter"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b2f9c3c3-32f4-48b4-b72f-76f03c35b750",
+              "name": "count",
+              "value": 1,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        240
+      ],
+      "id": "a7d08ec3-a408-449e-ad49-87215b6ffeb5",
+      "name": "Set Count"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "928894d0-2876-4996-9b1e-3d365b903771",
+              "leftValue": "={{ $('Counter').item.json.counter }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        240
+      ],
+      "id": "02856937-787e-4735-8694-4d6616b99e42",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a252eb06-03cd-4e3f-84b0-2a46082606ca",
+              "name": "counter",
+              "value": "={{ $('Counter').item.json.counter }}",
+              "type": "number"
+            },
+            {
+              "id": "43222ff8-c354-4afa-b050-7d55fe30c865",
+              "name": "cursor",
+              "value": "={{ $('Get Tweets').item.json.next_cursor }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        560
+      ],
+      "id": "97be0252-90aa-4c41-9a16-821423c04e4c",
+      "name": "Set Increase"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This code should be placed in an n8n Function node\n\n// Get the input items\nconst items = $input.all();\n\n// Process each item in the array\nreturn items.map(item => {\n  // Create a new value for the count field\n  let newCount = 1;\n  \n  // If there's an existing counter value, use it as a base\n  if (item.json && item.json.counter !== undefined) {\n    newCount = item.json.counter + 1;\n  }\n  \n  // Ensure json property exists\n  if (!item.json) {\n    item.json = {};\n  }\n  \n  // Set the value to the new field name \"count\"\n  item.json.count = newCount;\n  \n  // Return the modified item\n  return item;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        560
+      ],
+      "id": "13eab467-111d-4663-af62-b2bd8af57edf",
+      "name": "Increase Count"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5be1f203-28ea-4635-b42d-01f2a5bb367f",
+              "name": "count",
+              "value": "={{ $json.count }}",
+              "type": "string"
+            },
+            {
+              "id": "b68f8c17-c045-4b5b-8f8b-367ec72b72a3",
+              "name": "cursor",
+              "value": "={{ $('Set Increase').item.json.cursor }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        560
+      ],
+      "id": "3aa7c6bb-6936-4561-b1d2-bd537893af1d",
+      "name": "Set Count and Cursor"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handles single tweets & collections\n// Normalizes timestamps and extracts author handle from X URL\n\nconsole.log(\"Input item structure:\", JSON.stringify($input.item, null, 2));\n\nfunction normalizeDate(dateString) {\n  if (!dateString) return null;\n\n  const date = new Date(dateString);\n  if (isNaN(date.getTime())) return null;\n\n  return date.toISOString();\n}\n\nfunction formatDateHuman(dateString) {\n  if (!dateString) return '';\n\n  try {\n    const date = new Date(dateString);\n    return date.toLocaleString('en-US', {\n      year: 'numeric',\n      month: 'long',\n      day: 'numeric',\n      hour: '2-digit',\n      minute: '2-digit'\n    });\n  } catch {\n    return '';\n  }\n}\n\nfunction extractAuthorHandle(url) {\n  if (!url || typeof url !== 'string') return null;\n\n  const match = url.match(/x\\.com\\/([^\\/]+)\\/status/i);\n  return match ? match[1] : null;\n}\n\n// ---------- MULTIPLE TWEETS ----------\nif (\n  $input.item.json.tweets &&\n  Array.isArray($input.item.json.tweets) &&\n  $input.item.json.tweets.length > 0\n) {\n  const items = $input.item.json.tweets.map(tweet => ({\n    json: {\n      tweetId: tweet.id || '',\n      url: tweet.url || '',\n      authorHandle: extractAuthorHandle(tweet.url),\n      content: tweet.text || '',\n\n      likeCount: tweet.likeCount || 0,\n      retweetCount: tweet.retweetCount || 0,\n      replyCount: tweet.replyCount || 0,\n      quoteCount: tweet.quoteCount || 0,\n      viewCount: tweet.viewCount || 0,\n\n      createdAt: normalizeDate(tweet.createdAt),\n      createdAtHuman: formatDateHuman(tweet.createdAt)\n    }\n  }));\n\n  console.log(`Processing ${items.length} tweets`);\n  return items;\n}\n\n// ---------- SINGLE TWEET ----------\nconst tweetData = {\n  tweetId: $input.item.json.id || '',\n  url: $input.item.json.url || '',\n  authorHandle: extractAuthorHandle($input.item.json.url),\n  content: $input.item.json.text || '',\n\n  likeCount: $input.item.json.likeCount || 0,\n  retweetCount: $input.item.json.retweetCount || 0,\n  replyCount: $input.item.json.replyCount || 0,\n  quoteCount: $input.item.json.quoteCount || 0,\n  viewCount: $input.item.json.viewCount || 0,\n\n  createdAt: normalizeDate($input.item.json.createdAt),\n  createdAtHuman: formatDateHuman($input.item.json.createdAt)\n};\n\nconsole.log(\"Processing single tweet\");\n\nreturn {\n  json: tweetData\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        352,
+        240
+      ],
+      "id": "a12236d7-ac97-411b-8bea-d3ec1b9c57e7",
+      "name": "Extract Info"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        240
+      ],
+      "id": "7db0c3dc-ba77-4c02-982b-b95f3c4ab5d9",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        48,
+        560
+      ],
+      "id": "45d5dd34-f987-47c6-a1bd-060b0c4ea6ef",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "content": "# Increasing Count & Cursor\n",
+        "height": 260,
+        "width": 1360,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        512
+      ],
+      "id": "88f2081e-c184-46ff-9aac-ca9879d2aa66",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Checking Count\n",
+        "height": 260,
+        "width": 500
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        800,
+        160
+      ],
+      "id": "e2f8e7fa-c404-4648-af68-b1f598d157a5",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# Scraping X",
+        "height": 260,
+        "width": 1360,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        160
+      ],
+      "id": "064cc6ad-cbe2-46e2-ae68-3e4a38bafe85",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Noise Ingestion Pipeline(X)",
+        "height": 80,
+        "width": 500,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0e59134b-1d90-4596-aee8-8f8b2c8b7b42",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## NEWS INGESTION \n",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        176,
+        832
+      ],
+      "id": "a2c82ee1-7c3c-4ef0-97d6-53bcc6ca2d9d",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## NEWS NOISE INGESTION PIPELINE\n",
+        "height": 2032,
+        "width": 1744,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        896
+      ],
+      "id": "876fe7e8-db0b-4ef9-a1db-fe84c7fe42c4",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "url": "https://feeds.bbci.co.uk/news/rss.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -560,
+        1280
+      ],
+      "id": "6f0413c9-c8ca-4610-89c1-557a2dae25a9",
+      "name": "BBC NEWS"
+    },
+    {
+      "parameters": {
+        "url": "https://www.dawn.com/feeds/home",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -560,
+        1536
+      ],
+      "id": "6246e1c4-183c-4933-bfd9-52089116170b",
+      "name": "Dawn"
+    },
+    {
+      "parameters": {
+        "url": "https://www.aljazeera.com/xml/rss/all.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -560,
+        1408
+      ],
+      "id": "a56a3586-7f1a-486f-951c-0b43001751ca",
+      "name": "Aljazeera"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -608,
+        1056
+      ],
+      "id": "250fd5c3-df58-4c65-b2c4-ffd8a9717311",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pure JS SHA-256 function (your existing function)\nfunction sha256(ascii) {\n  function rightRotate(value, amount) {\n    return (value >>> amount) | (value << (32 - amount));\n  }\n\n  const mathPow = Math.pow;\n  const maxWord = mathPow(2, 32);\n  let result = '';\n\n  const words = [];\n  const asciiBitLength = ascii.length * 8;\n\n  const hash = [];\n  const k = [];\n  let primeCounter = 0;\n\n  const isComposite = {};\n  for (let candidate = 2; primeCounter < 64; candidate++) {\n    if (!isComposite[candidate]) {\n      for (let i = 0; i < 313; i += candidate) {\n        isComposite[i] = candidate;\n      }\n      hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;\n      k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;\n    }\n  }\n\n  ascii += '\\x80';\n  while ((ascii.length % 64) !== 56) ascii += '\\x00';\n\n  for (let i = 0; i < ascii.length; i++) {\n    const j = ascii.charCodeAt(i);\n    words[i >> 2] |= j << ((3 - i) % 4) * 8;\n  }\n\n  words[words.length] = (asciiBitLength / maxWord) | 0;\n  words[words.length] = asciiBitLength;\n\n  for (let j = 0; j < words.length;) {\n    const w = words.slice(j, (j += 16));\n    const oldHash = hash.slice(0);\n\n    for (let i = 0; i < 64; i++) {\n      const w15 = w[i - 15], w2 = w[i - 2];\n      const a = hash[0], e = hash[4];\n\n      const temp1 =\n        hash[7] +\n        (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25)) +\n        ((e & hash[5]) ^ (~e & hash[6])) +\n        k[i] +\n        (w[i] = i < 16\n          ? w[i]\n          : (w[i - 16] +\n             (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3)) +\n             w[i - 7] +\n             (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))) | 0);\n\n      const temp2 =\n        (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22)) +\n        ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));\n\n      hash.unshift((temp1 + temp2) | 0);\n      hash[4] = (hash[4] + temp1) | 0;\n      hash.pop();\n    }\n\n    for (let i = 0; i < 8; i++) {\n      hash[i] = (hash[i] + oldHash[i]) | 0;\n    }\n  }\n\n  for (let i = 0; i < 8; i++) {\n    for (let j = 3; j >= 0; j--) {\n      const b = (hash[i] >> (j * 8)) & 255;\n      result += (b < 16 ? '0' : '') + b.toString(16);\n    }\n  }\n\n  return result;\n}\n\n// === Robust processing for all items ===\nconst output = [];\n\nfor (const item of items) {\n  // Skip items missing raw_text\n  if (!item.json.raw_text || typeof item.json.raw_text !== 'string') {\n    // Optional: log skipped items\n    console.log('Skipping item, missing raw_text:', item);\n    continue;\n  }\n\n  // Compute hash of raw_text\n  const hash = sha256(item.json.raw_text.trim());\n\n  // Push output item\n  output.push({\n    json: {\n      ...item.json,\n      hash\n    }\n  });\n}\n\n// Return all processed items\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        128,
+        1872
+      ],
+      "id": "fbe04144-8adb-4af5-8617-d72909d7295e",
+      "name": "Hashing"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Minimum length for text to be considered\nconst MIN_LENGTH = 30;\n\n// Heuristic keywords for “real signal”\nconst SIGNAL_KEYWORDS = [\n    'cost', 'delay', 'failure', 'risk', 'compliance',\n    'lawsuit', 'penalty', 'recall', 'breach', 'downtime',\n    'problem', 'issue', 'slow', 'error', 'security'\n];\n\n// Helper: check if any keyword exists in text\nfunction containsSignal(text) {\n    const lower = text.toLowerCase();\n    return SIGNAL_KEYWORDS.some(k => lower.includes(k));\n}\n\n// Filter items\nreturn items.filter(item => {\n    const text = (item.json.raw_text || '').trim();\n\n    // 1. Remove empty / too short text\n    if (text.length < MIN_LENGTH) return false;\n\n    // 2. Remove items with no signal keywords\n    if (!containsSignal(text)) return false;\n\n    // 3. Optional: remove items that are just URLs, numbers, emojis, or repetitive chars\n    if (/^[\\s\\d\\W]+$/.test(text)) return false;\n\n    return true; // keep the rest\n}).map(item => {\n    const text = (item.json.raw_text || '').trim();\n    return {\n        json: {\n            ...item.json,\n            length: text.length\n        }\n    };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        2096
+      ],
+      "id": "4203ca2d-746b-40b1-aedb-a923fd81ac9e",
+      "name": "Noise Filteration"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item=>{\n  const josn=item.json\n  //Extract Title\n  const title=(item.json.title||'').trim();\n  const desc=(item.json.description||item.json.body||item.json.content||'').trim();\n  //combining both\n  const raw_text=`${title} ${desc}`.trim();\n  const origin=(item.json.feed||item.json.source||'').trim();\n  const timestamp=(item.json.pubDate||item.json.date||'').trim();\n\n  return{\n    json:{\n      source:'rss',\n      origin:origin,\n      raw_text:raw_text,\n      timestamp:timestamp,\n      url:item.json.url||item.json.link||'',\n      length:raw_text.length\n  \n    }\n  }\n})"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -128,
+        1872
+      ],
+      "id": "99a9d27d-a280-4352-bd41-8cd449e029ff",
+      "name": "Normalization"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "85deaff5-deec-43d5-af9d-f58397bf8710",
+              "name": "subreddits",
+              "value": "[\"technology\",\"gaming\",\"movies\",\"todayilearned\",\"worldnews\",\"interestingasfuck\",\"AskReddit\"]",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2192,
+        576
+      ],
+      "id": "940d0ed4-fea7-4410-97a8-3924416c5b7e",
+      "name": "sub credential"
+    },
+    {
+      "parameters": {
+        "url": "=https://www.reddit.com/r/technology/hot.json?limit=50",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "n8n:trend.bot:v1.0 (by /u/YourRedditUsername)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1776,
+        560
+      ],
+      "id": "eaa9d33e-ee6b-48aa-aac4-fd5d629e37a9",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "subreddits",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1984,
+        560
+      ],
+      "id": "d4893020-045f-4b7b-94f7-967064c27b7a",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = [];\nconst posts = $input.first().json.data.children;\n\nfor (const post of posts) {\n  const url = `https://reddit.com${post.data.permalink}`;\n  \n  // Create a unique hash based on the URL (which never changes for a specific post)\n  // This uses a simple Base64 encoding of the URL string as a \"hash\"\n  const hash = Buffer.from(url).toString('base64').substring(0, 16);\n\n  results.push({\n    hash: hash, // Our unique identifier\n    title: post.data.title,\n    subreddit: post.data.subreddit,\n    upvotes: post.data.ups,\n    comments: post.data.num_comments,\n    url: url,\n    timestamp: new Date().toISOString()\n  });\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1568,
+        528
+      ],
+      "id": "165e720c-8421-44b4-b06c-93696821369b",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "content": "## Redit Trend \n",
+        "height": 688,
+        "width": 1504
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2288,
+        176
+      ],
+      "id": "1db4bfb2-82bd-4aa1-ab0c-57aae03b92a2",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "url": "https://www.geo.tv/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -560,
+        2688
+      ],
+      "id": "98dd88b2-01f5-49d4-aae4-abfbd2e81d0b",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "url": "https://www.dawn.com/feeds/home",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -560,
+        1696
+      ],
+      "id": "fd650682-4f73-4d0a-b076-b585200fb565",
+      "name": "Dawn1"
+    },
+    {
+      "parameters": {
+        "url": "https://tribune.com.pk/feed/home",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -560,
+        1824
+      ],
+      "id": "e4812864-c952-4558-84aa-d38db0f82008",
+      "name": "Express"
+    },
+    {
+      "parameters": {
+        "url": "https://www.thenews.com.pk/rss/1/1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -560,
+        1968
+      ],
+      "id": "828bbd47-c543-429f-981b-34a2f10bd185",
+      "name": "The News International"
+    },
+    {
+      "parameters": {
+        "url": "https://www.brecorder.com/feeds/latest-news",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -560,
+        2160
+      ],
+      "id": "c222d7e7-3f55-4ea5-b2c7-a09f32fbaa8f",
+      "name": "Business Recorder"
+    },
+    {
+      "parameters": {
+        "url": "https://www.pakistantoday.com.pk/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -560,
+        2304
+      ],
+      "id": "8ad199ef-24c2-4507-bb8d-fc67707adfc1",
+      "name": "Pakistan Today"
+    },
+    {
+      "parameters": {
+        "url": "https://dailytimes.com.pk/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -560,
+        2528
+      ],
+      "id": "99c35fc6-185f-4a73-be9a-493640fdcd97",
+      "name": "Daily Times"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "title",
+              "cssSelector": ".heading a",
+              "returnArray": true
+            },
+            {
+              "key": "Summary",
+              "cssSelector": ".m_except p",
+              "returnArray": true
+            },
+            {
+              "key": "link",
+              "cssSelector": ".heading a",
+              "returnValue": "attribute",
+              "attribute": "href",
+              "returnArray": true
+            },
+            {
+              "key": "category",
+              "cssSelector": ".heading a",
+              "returnValue": "attribute",
+              "attribute": "data-vr-contentbox",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -352,
+        2688
+      ],
+      "id": "5a6fecbd-e577-4cae-9287-8d3882c6b760",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the input item (the one JSON with arrays)\nconst input = $input.item.json;\n\n// Determine the number of news items\nconst count = input.link.length;\n\n// Create an array of news objects\nconst news = [];\n\nfor (let i = 0; i < count; i++) {\n    news.push({\n        json: {\n            link: input.link[i] || null,\n            category: input.category[i] || null,\n            title: input.title?.[i] || null,\n            summary: input.Summary?.[i] || null\n        }\n    });\n}\n\nreturn news;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -128,
+        2672
+      ],
+      "id": "bc01fbc7-8647-4b49-b4a7-c61bef437adb",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "twitter_data",
+          "mode": "list",
+          "cachedResultName": "twitter_data"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "content": "={{ $json.content }}",
+            "created_at": "={{ $json.createdAt }}",
+            "id": "={{ $json.tweetId }}",
+            "likes": "={{ $json.likeCount }}",
+            "retweets": "={{ $json.retweetCount }}",
+            "author": "={{ $json.authorHandle }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "author",
+              "displayName": "author",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "likes",
+              "displayName": "likes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "retweets",
+              "displayName": "retweets",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        560,
+        240
+      ],
+      "id": "7235c851-97f4-4e34-b7cd-33f4a0449368",
+      "name": "Postgres Tweets",
+      "credentials": {
+        "postgres": {
+          "id": "IlB9jrjzkLCIFRP6",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "reddit_posts",
+          "mode": "list",
+          "cachedResultName": "reddit_posts"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "hash": "={{ $json.hash }}",
+            "title": "={{ $json.title }}",
+            "subreddit": "={{ $json.subreddit }}",
+            "upvotes": "={{ $json.upvotes }}",
+            "comments": "={{ $json.comments }}",
+            "url": "={{ $json.url }}",
+            "thumbnail": "={{ $json.thumbnail }}",
+            "timestamp": "={{ $json.timestamp }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        -1328,
+        544
+      ],
+      "id": "e51d3278-0fd6-4eef-ac80-c7354f21da8f",
+      "name": "Postgres Reddit",
+      "credentials": {
+        "postgres": {
+          "id": "IlB9jrjzkLCIFRP6",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "news_items",
+          "mode": "list",
+          "cachedResultName": "news_items"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "source": "={{ $json.source }}",
+            "origin": "={{ $json.origin }}",
+            "published_at": "={{ $json.timestamp }}",
+            "raw_text": "={{ $json.raw_text }}",
+            "url": "={{ $json.url }}",
+            "content_length": "={{ $json.length }}",
+            "hash": "={{ $json.hash }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "origin",
+              "displayName": "origin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "raw_text",
+              "displayName": "raw_text",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "published_at",
+              "displayName": "published_at",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "content_length",
+              "displayName": "content_length",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "hash",
+              "displayName": "hash",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "skipOnConflict": true
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        416,
+        1872
+      ],
+      "id": "9fe490cd-af64-43c6-9ccf-5c6b2718964c",
+      "name": "Postgres News",
+      "alwaysOutputData": false,
+      "credentials": {
+        "postgres": {
+          "id": "IlB9jrjzkLCIFRP6",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Youtube Global Pulse\n",
+        "height": 560,
+        "width": 1680
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        3008
+      ],
+      "id": "129cb520-11a7-4ecd-b269-15df84e2f4fc",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = [];\n\nfor (const item of items) {\n  const threads = item.json.items || [];\n\n  for (const thread of threads) {\n    if (!thread.snippet?.topLevelComment?.snippet) continue;\n\n    const c = thread.snippet.topLevelComment.snippet;\n\n    if (!c.textDisplay) continue;\n\n    output.push({\n      json: {\n        comment_id: thread.id,\n        video_id: thread.snippet.videoId,\n        text: c.textDisplay,\n        author: c.authorDisplayName,\n        likes: c.likeCount || 0,\n        published_at: c.publishedAt,\n        region: \"PK\",\n        source: \"youtube_api\"\n      }\n    });\n  }\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        528,
+        3216
+      ],
+      "id": "b13453e9-d679-4a0a-ba1f-ce7685f39f72",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/videos",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "snippet,statistics"
+            },
+            {
+              "name": "chart",
+              "value": "mostPopular"
+            },
+            {
+              "name": "regionCode",
+              "value": "=PK"
+            },
+            {
+              "name": "maxResults",
+              "value": "25"
+            },
+            {
+              "name": "key",
+              "value": "AIzaSyC692WdCRHLaSFbWU670Fla6kMpkoKDayk"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -304,
+        3232
+      ],
+      "id": "263b5fa4-dde0-4fae-ba24-c7a0021aa6ad",
+      "name": "HTTP Request for big/viral VIDEO FETCH"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/commentThreads",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "snippet"
+            },
+            {
+              "name": "videoId",
+              "value": "={{$json.videoId}}"
+            },
+            {
+              "name": "maxResults",
+              "value": "20"
+            },
+            {
+              "name": "order",
+              "value": "relevance"
+            },
+            {
+              "name": "textFormat",
+              "value": "plainText"
+            },
+            {
+              "name": "key",
+              "value": "AIzaSyC692WdCRHLaSFbWU670Fla6kMpkoKDayk"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        320,
+        3216
+      ],
+      "id": "e8b1448c-edc8-4e1b-aa5d-f27c66679186",
+      "name": "HTTP Request for COMMENTS",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "youtube_comments",
+          "mode": "list",
+          "cachedResultName": "youtube_comments"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {
+            "comment_id": "{{$json.comment_id}}",
+            "video_id": "{{$json.video_id}}",
+            "text": "{{$json.text}}",
+            "author": "{{$json.author}}",
+            "published_at": "={{$json.published_at}}",
+            "likes": "={{$json.likes}}",
+            "region": "{{$json.region}}",
+            "source": "{{$json.source}}"
+          },
+          "matchingColumns": [
+            "comment_id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "comment_id",
+              "displayName": "comment_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "video_id",
+              "displayName": "video_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "author",
+              "displayName": "author",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "likes",
+              "displayName": "likes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "published_at",
+              "displayName": "published_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "region",
+              "displayName": "region",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        736,
+        3216
+      ],
+      "id": "1245d1fe-ee82-4fd1-8793-252ea4bf3551",
+      "name": "Insert or update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "IlB9jrjzkLCIFRP6",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return items[0].json.items.map(v => ({\n  videoId: v.id,\n  title: v.snippet.title,\n  views: Number(v.statistics.viewCount || 0)\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -96,
+        3232
+      ],
+      "id": "7e3f4a79-1c11-49ad-a73a-5b05fa0ac834",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "01001f37-54d8-453d-8839-dd667ba203e0",
+              "leftValue": "={{Number($json.views)}}",
+              "rightValue": "=100000",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        112,
+        3232
+      ],
+      "id": "55ea76c7-2bdd-4c84-a11b-2d2d80f068f9",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "url": "https://api.twitterapi.io/twitter/tweet/advanced_search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "Pakistan Army"
+            },
+            {
+              "name": "queryType",
+              "value": "latest"
+            },
+            {
+              "name": "cursor",
+              "value": "={{ $json.cursor }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "new1_18ad5a769f484dc0b83670792fa61698"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        176,
+        240
+      ],
+      "id": "81dfd5f6-7fc8-4c8e-8983-cafcc1a3ff67",
+      "name": "Get Tweets1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "7xsP2mz7DM8Z84i8",
+          "name": "Header Auth account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Set Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Counter": {
+      "main": [
+        [
+          {
+            "node": "Get Tweets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Count": {
+      "main": [
+        [
+          {
+            "node": "Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Increase": {
+      "main": [
+        [
+          {
+            "node": "Increase Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increase Count": {
+      "main": [
+        [
+          {
+            "node": "Set Count and Cursor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Count and Cursor": {
+      "main": [
+        [
+          {
+            "node": "Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Info": {
+      "main": [
+        [
+          {
+            "node": "Postgres Tweets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Set Increase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BBC NEWS": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aljazeera": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dawn": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "BBC NEWS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Aljazeera",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Dawn",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Dawn1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Express",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "The News International",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Business Recorder",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Pakistan Today",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Daily Times",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hashing": {
+      "main": [
+        [
+          {
+            "node": "Postgres News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalization": {
+      "main": [
+        [
+          {
+            "node": "Hashing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sub credential": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Postgres Reddit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dawn1": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Express": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "The News International": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Business Recorder": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pakistan Today": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Times": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Insert or update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request for big/viral VIDEO FETCH": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request for COMMENTS": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request for COMMENTS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres News": {
+      "main": [
+        []
+      ]
+    },
+    "Get Tweets1": {
+      "main": [
+        [
+          {
+            "node": "Extract Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Tweets": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "e0b0e695-fde2-4d5b-ad9f-bf69399e59cc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8bc3bd39a6351fd973ed4c3325536ecfd4527089fea8299cf53334e6a5c1e37c"
+  },
+  "id": "-o6lv6NFL9ohUND9Ka-oB",
+  "tags": []
+}
