@@ -3,7 +3,7 @@
 ## To Create Postgres Image in Docker 
 sudo docker run -it --name postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=123456 -e POSTGRES_DB=postgres -v pgdata:/var/lib/postgresql -p 5433:5432 --network bridge postgres 
 ## TO create table in db:
-CREATE TABLE news_items (
+- CREATE TABLE news_items (
     id BIGSERIAL PRIMARY KEY,
     source VARCHAR(50) NOT NULL,
     origin TEXT,
@@ -14,7 +14,7 @@ CREATE TABLE news_items (
     hash CHAR(64) NOT NULL UNIQUE,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
-CREATE TABLE reddit_posts (
+- CREATE TABLE reddit_posts (
     id SERIAL PRIMARY KEY,
     hash VARCHAR(50) UNIQUE,
     title TEXT NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE reddit_posts (
     url TEXT,
     timestamp TIMESTAMPTZ
 );
-CREATE TABLE twitter_data (
+- CREATE TABLE twitter_data (
     id BIGINT PRIMARY KEY,
     content TEXT NOT NULL,
     author VARCHAR(100) NOT NULL,
